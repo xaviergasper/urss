@@ -1,0 +1,25 @@
+MacaulayMatrix = (d,I)->(
+    R:=ring I;
+    varsR:=gens R;
+    Monsd:=flatten entries basis(d,R);
+    Id= super basis(d,I);
+    columnsM=apply(flatten entries Id,f->((coefficients(f,Monomials=>Monsd))_1));
+    M=columnsM_0;
+    scan(#columnsM-1,i->(M=M|columnsM_(i+1)));
+    return(transpose(M));
+);
+R = QQ[a,b,c,d,e,f][x,y,z];
+F = a*x^2 + b*x*y + c*x*z + d*y^2 + e*y*z + f*z^2;
+I = ideal F;
+M = MacaulayMatrix (N,I);
+zeroMinorColumns = select(subsets(numColumns M, numRows M), i->(det M_i)== 0_R);
+
+subsetCondition = (subset, m) -> 
+#select(	entries(transpose(m^subset)), 
+entry->number(entry, i -> i != 0) != 0) >= #subset;
+
+hallsTheoremChecker = m -> 
+#select(for subset in subsets(numRows m)-set({}, toList(0..(numRows m - 1))) list 
+subsetCondition(subset, m), i -> i==false) == 0
+
+mylist = select(zeroMinorColumns, subset->hallsTheoremChecker(submatrix(M,subset)))
