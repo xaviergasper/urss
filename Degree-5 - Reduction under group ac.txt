@@ -1,0 +1,38 @@
+Degree-5 - Reduction under group action
+
+-- have to input into mylist the 198 columns corresponding to submatrices which satisfy the bijection condition but have 0 determinant
+mylist = …
+MacaulayMatrix = (d,I)->(
+    R:=ring I;
+    varsR:=gens R;
+    Monsd:=flatten entries basis(d,R);
+    Id= super basis(d,I);
+    columnsM=apply(flatten entries Id,f->((coefficients(f,Monomials=>Monsd))_1));
+    M=columnsM_0;
+    scan(#columnsM-1,i->(M=M|columnsM_(i+1)));
+    return(transpose(M));
+);
+R = QQ[a,b,c,d,e,f][x,y,z];
+F = a*x^2 + b*x*y + c*x*z + d*y^2 + e*y*z + f*z^2;
+I = ideal F;
+M = MacaulayMatrix (5,I);
+monomialsIndexingColumns = flatten entries basis(5, R);
+getCoefficients = l -> for i in l list monomialsIndexingColumns#i;
+permutationsOfVariables = permutations {x,y,z};
+myMonomialsList = for elem in mylist list getCoefficients(elem);
+orbitUnderS3 = l -> 
+for p in permutationsOfVariables list
+		apply(l, i -> sub(i,{x=>p#0,y=>p#1,z=>p#2}));
+
+myMonomialSets = for elem in myMonomialsList list set(elem);
+
+myNewMonomialList = {};
+
+while #myMonomialSets != 0 do(
+	t = toList(myMonomialSets)#0;
+myNewMonomialList = append(myNewMonomialList, t);
+orbitSet = for elem in orbitUnderS3(t) list set(elem);
+myMonomialSets = myMonomialSets - set(orbitSet);
+) 
+
+print(#myNewMonomialsList)
