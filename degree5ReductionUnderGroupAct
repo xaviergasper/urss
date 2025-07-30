@@ -1,5 +1,3 @@
-Degree-5 - Reduction under group action
-
 -- have to input into mylist the 198 columns corresponding to submatrices which satisfy the bijection condition but have 0 determinant
 mylist = …
 MacaulayMatrix = (d,I)->(
@@ -35,4 +33,4 @@ orbitSet = for elem in orbitUnderS3(t) list set(elem);
 myMonomialSets = myMonomialSets - set(orbitSet);
 ) 
 
-print(#myNewMonomialsList)
+#myNewMonomialList
